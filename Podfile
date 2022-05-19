@@ -6,5 +6,6 @@ target 'weatherApp' do
   use_frameworks!
 
    pod 'IBAnimatable'
+pod 'MBProgressHUD'
 
 end

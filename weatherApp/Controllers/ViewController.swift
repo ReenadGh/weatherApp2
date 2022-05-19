@@ -7,6 +7,7 @@
 
 import UIKit
 import IBAnimatable
+import MBProgressHUD
 class ViewController: UIViewController {
     
     @IBOutlet var cityNamelbl: UILabel!
@@ -95,25 +96,30 @@ extension ViewController {
         
         let jsonURLstring = "http://api.openweathermap.org/data/2.5/forecast?zip=\(cityCode)&appid=553626bed26b25f56af0d6fa3890d1c5"
         guard let url = URL(string : jsonURLstring) else {return }
+        
+        //start of fetching progress
+        MBProgressHUD.showAdded(to: self.view, animated: true)
         URLSession.shared.dataTask(with: url) { data , response, errur in
             guard let data = data else {return }
-            
-            let dataAsString = String(data: data , encoding: .utf8)
-            
             do {
                 let watherData = try JSONDecoder().decode( CityWeather.self ,from: data )
                 self.dailyWeatherArr.removeAll()
                
+                //save only 16 forecast time for the city
                 self.currentCityName = watherData.city.name
-                for i in 0...20{
+                for i in 0...15{
                     self.dailyWeatherArr.append(watherData.list[i])
                 }
-         print( self.dailyWeatherArr.count)
-
+                
                 DispatchQueue.main.async {
                     self.updateWeatherCardViewInfo()
                     self.DaysTableView.reloadData()
+                    
+                    //end of fetching progress
+                    MBProgressHUD.hide(for: self.view, animated: true)
                 }
+                
+
             }catch let jsonErr{
                 print("Error :" ,jsonErr )
             }
@@ -179,7 +185,7 @@ extension ViewController {
         
         cityNamelbl.text = currentCityName
         datelbl.text = convertDtToformatedDate(dt: Double(dailyWeatherArr[indexOfSelectedDay.row].dt), foramt: "MMM d, h:mm a")
-        weekDaylbl.text = convertDtToformatedDate(dt: Double(dailyWeatherArr[indexOfSelectedDay.row].dt), foramt: "EEEE")
+        weekDaylbl.text = dailyWeatherArr[indexOfSelectedDay.row].weather[0].weatherDescription
         weatherTemplbl.text = "\(ConvertKivToC(temperature: dailyWeatherArr[indexOfSelectedDay.row].main.temp))"
 
         humlbl.text = "\( dailyWeatherArr[indexOfSelectedDay.row].main.humidity)"

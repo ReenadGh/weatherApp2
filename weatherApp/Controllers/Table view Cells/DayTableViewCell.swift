@@ -25,6 +25,28 @@ class DayTableViewCell: UITableViewCell {
         highTemplbl.text = highTemp
         self.weatherImg.image = weatherImg
     }
+    
+    
+    
+    func changeCellToSelected (){
+        
+        dayDatelbl.textColor = .blue
+        lowTemplbl.textColor = .blue
+        weatherStatuslbl.textColor = .blue
+        highTemplbl.textColor = .blue
+
+
+    }
+    func changeCellToUnSelected (){
+        
+   
+        dayDatelbl.textColor = .white
+        lowTemplbl.textColor = .white
+        weatherStatuslbl.textColor = .white
+        highTemplbl.textColor = .white
+
+
+    }
 
 }
 

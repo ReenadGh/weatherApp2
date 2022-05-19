@@ -6,9 +6,46 @@
 //
 
 import UIKit
-
+import MBProgressHUD
+import IBAnimatable
 class CitiesViewController: UIViewController {
     @IBOutlet var citiesCollectionView: UICollectionView!
+    
+    //enter city code Card View propilires
+    @IBOutlet var enterCityCodeCard: AnimatableView!
+    @IBOutlet var cityCodeTf: AnimatableTextField!
+    @IBOutlet var errorMessagelbl: UILabel!
+    
+    @IBAction func dissmisCodeCityCardTapped(_ sender: UIButton) {
+        enterCityCodeCard.animate(.slide(way: .out, direction: .down ))
+    }
+    
+    func showErrorMessage(message : String ){
+        
+        errorMessagelbl.isHidden = false
+        errorMessagelbl.text = message
+        enterCityCodeCard.animate(.shake(repeatCount: 1),duration: 0.4 )
+    }
+    
+    //if user click on enter button
+    @IBAction func enterCityCodeTapped(_ sender: UIButton) {
+                
+        guard let cityCode = cityCodeTf.text,
+              !cityCode.isEmpty else {
+            return
+        }
+ 
+        if citiesInfArr.contains(where: { $0.cityWOEIDs == cityCode }) {
+          showErrorMessage(message: "the city is already exists !")
+        } else {
+            addNewCityByCode(cityCode : cityCode )
+        }
+        
+     
+        
+    }
+    
+    
     
     var citiesInfArr = [WeatherCity]()
     private var indexOfSelectedCity : IndexPath =  [0,0]
@@ -22,7 +59,7 @@ class CitiesViewController: UIViewController {
         addNewCityByCode(cityCode : "12521" )
         addNewCityByCode(cityCode : "35213" )
         addNewCityByCode(cityCode : "12345" )
-
+     
 
         print(citiesInfArr)
     }
@@ -82,18 +119,21 @@ extension CitiesViewController : UICollectionViewDelegate , UICollectionViewData
         indexOfSelectedCity = indexPath
         
         
-        // pass the city code to the main controller
-        let mainController = self.navigationController?.viewControllers.first as! ViewController
-        mainController.currentCityCode = citiesInfArr[indexPath.row].cityWOEIDs
-        self.navigationController?.popViewController(animated: true)
+ 
 
         
         if(indexPath.row <  citiesInfArr.count ){
-//            getDataFromApi(zipCode : citiesNames[indexOfSelectedCity.item].cityWOEIDs )
-//            collectionView.reloadData()
+            
+            // pass the city code to the main controller
+            let mainController = self.navigationController?.viewControllers.first as! ViewController
+            mainController.currentCityCode = citiesInfArr[indexPath.row].cityWOEIDs
+            self.navigationController?.popViewController(animated: true)
+  
         }
         else{
-            
+            // if the user click on last cell ( + )
+            enterCityCodeCard.isHidden = false
+            enterCityCodeCard.animate(.slide(way: .in, direction: .up))
             
             
         }
@@ -130,9 +170,14 @@ extension CitiesViewController {
 
                 DispatchQueue.main.async {
                     citiesCollectionView.reloadData()
+                    enterCityCodeCard.animate(.slide(way: .out, direction:.down))
                 }
             }catch let jsonErr{
                 print("Error :" ,jsonErr )
+                DispatchQueue.main.async {
+                    // if the user enter wrong city code :
+                 showErrorMessage(message: "invalid city code ")
+                }
             }
             
         }.resume()

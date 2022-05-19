@@ -16,20 +16,6 @@ class CityCollectionViewCell: UICollectionViewCell {
     @IBOutlet var sunsetlbl: UILabel!
     @IBOutlet var cityNamelbl: UILabel!
     
-    
-    func changeCellToSelected (){
-        
-        cityNamelbl.textColor = .black
-        cardView.fillColor = .white
 
-
-    }
-    func changeCellToUnSelected (){
-        
-        cityNamelbl.textColor = .white
-        cardView.fillColor = .black
-      
-
-    }
 
 }

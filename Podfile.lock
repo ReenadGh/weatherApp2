@@ -1,16 +1,20 @@
 PODS:
   - IBAnimatable (6.1.0)
+  - MBProgressHUD (1.2.0)
 
 DEPENDENCIES:
   - IBAnimatable
+  - MBProgressHUD
 
 SPEC REPOS:
   trunk:
     - IBAnimatable
+    - MBProgressHUD
 
 SPEC CHECKSUMS:
   IBAnimatable: 99dddd4c0625884a301ba3ecbc1615f8a390368e
+  MBProgressHUD: 3ee5efcc380f6a79a7cc9b363dd669c5e1ae7406
 
-PODFILE CHECKSUM: c65ccddb5dd492fc275752b17026c162c2dd0106
+PODFILE CHECKSUM: c95c623600df167dfb7e8436b00a8a902b0bc4a2
 
 COCOAPODS: 1.11.2
