@@ -112,8 +112,13 @@ extension ViewController : UITableViewDataSource , UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+     
         let cell = DaysTableView.dequeueReusableCell(withIdentifier: "dayCell", for: indexPath) as! DayTableViewCell
         
+        
+        cell.setDayWeatherData(dayDate: convertDtToformatedDate(dt: Double(dailyWeatherArr[indexPath.row].dt), foramt: "h:mm a")
+                              
+                              , watherStatus: convertDtToformatedDate(dt: Double(dailyWeatherArr[indexPath.row].dt), foramt: "EEE"), lowTemp:"↓ \( ConvertKivToC(temperature: dailyWeatherArr[indexPath.row].main.tempMin))", highTemp: "↑ \(ConvertKivToC(temperature: dailyWeatherArr[indexPath.row].main.tempMax))", weatherImg: getWeatherStateIcon(weatherState:   dailyWeatherArr[indexPath.row].weather[0].icon) )
         
         
         return cell
@@ -146,13 +151,16 @@ extension ViewController {
             
             do {
                 let watherData = try JSONDecoder().decode( CityWeather.self ,from: data )
-                print(watherData.list[0].weather[0].icon)
-               
-                self.dailyWeatherArr = watherData.list
-                
+               // self.dailyWeatherArr.removeAll()
+            
+                for i in 0...20{
+                    self.dailyWeatherArr.append(watherData.list[i])
+                }
+         print( self.dailyWeatherArr.count)
+
                 DispatchQueue.main.async {
                     self.updateWeatherCardViewInfo()
-                    
+                    self.DaysTableView.reloadData()
                 }
             }catch let jsonErr{
                 print("Error :" ,jsonErr )
@@ -162,11 +170,9 @@ extension ViewController {
     }
     
     // take the weather icon name and get the image from the api
-    
     func getWeatherStateIcon(weatherState : String )->UIImage{
         
-        
-        let url = URL(string: "https://openweathermap.org/img/w\(weatherState).png")
+        let url = URL(string: "https://openweathermap.org/img/wn/\(weatherState)@2x.png")
         let data = try? Data(contentsOf: url!)
         
         return UIImage(data: data!)!
@@ -183,7 +189,6 @@ extension ViewController {
     
     
     // date formatting converting functions
-    
     func convertDtToformatedDate(dt: Double, foramt : String ) -> String {
         
 //        Wednesday, Sep 12, 2018           --> EEEE, MMM d, yyyy
@@ -205,6 +210,12 @@ extension ViewController {
     
     
     
+    // onvert the value from fahrenheit to celsius dgree
+    func ConvertKivToC(temperature : Double)->String {
+       return  "\(String(format: "%.0f", temperature - 273.15))°"
+    }
+    
+    
 }
 
 
@@ -212,19 +223,19 @@ extension ViewController {
 extension ViewController {
     
     // update the view depends on the index of selected day  * 0 for defult
-    
     func updateWeatherCardViewInfo(){
-  
         datelbl.text = convertDtToformatedDate(dt: Double(dailyWeatherArr[indexOfSelectedDay.row].dt), foramt: "MMM d, h:mm a")
         weekDaylbl.text = convertDtToformatedDate(dt: Double(dailyWeatherArr[indexOfSelectedDay.row].dt), foramt: "EEEE")
-//        weatherTemplbl.text = "\(Int(dailyWeatherArr[indexOfSelectedDay.row].theTemp))°"
-//        pressurelbl.text = "\(Int(dailyWeatherArr[indexOfSelectedDay.row].airPressure))"
-//        humlbl.text = "\(Int(dailyWeatherArr[indexOfSelectedDay.row].humidity))"
-//        windlbl.text = "\(Int(dailyWeatherArr[indexOfSelectedDay.row].windSpeed))"
-//        visibiltylbl.text = "\(Int(dailyWeatherArr[indexOfSelectedDay.row].visibility))"
-//        selectedWeatherImg.image = getWeatherStateIcon(weatherState:   dailyWeatherArr[indexOfSelectedDay.row].weatherStateAbbr)
+        weatherTemplbl.text = "\(ConvertKivToC(temperature: dailyWeatherArr[indexOfSelectedDay.row].main.temp))"
+
+        humlbl.text = "\( dailyWeatherArr[indexOfSelectedDay.row].main.humidity)"
+        pressurelbl.text = "\(dailyWeatherArr[indexOfSelectedDay.row].main.pressure)"
+        windlbl.text = "\( dailyWeatherArr[indexOfSelectedDay.row].wind.speed)"
+        visibiltylbl.text = "\(dailyWeatherArr[indexOfSelectedDay.row].visibility.description)"
+        selectedWeatherImg.image = getWeatherStateIcon(weatherState:   dailyWeatherArr[indexOfSelectedDay.row].weather[0].icon)
 //
     }
+ 
     
     
 }

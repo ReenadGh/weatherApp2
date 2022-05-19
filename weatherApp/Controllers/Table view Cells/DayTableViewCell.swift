@@ -18,7 +18,7 @@ class DayTableViewCell: UITableViewCell {
     
     
     
-    func setDayWatherData (dayDate : String , watherStatus : String , lowTemp : String , highTemp : String , weatherImg : UIImage){
+    func setDayWeatherData (dayDate : String , watherStatus : String , lowTemp : String , highTemp : String , weatherImg : UIImage){
         dayDatelbl.text = dayDate
         weatherStatuslbl.text = watherStatus
         lowTemplbl.text = lowTemp
