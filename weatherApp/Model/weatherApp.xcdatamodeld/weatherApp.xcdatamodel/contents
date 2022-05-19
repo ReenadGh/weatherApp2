@@ -1,18 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="19461" systemVersion="21A559" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
-    <entity name="DayWeather" representedClassName="DayWeather" syncable="YES" codeGenerationType="class">
-        <attribute name="airPressure" optional="YES" attributeType="String"/>
-        <attribute name="cityId" optional="YES" attributeType="String"/>
-        <attribute name="cityName" optional="YES" attributeType="String"/>
-        <attribute name="created_at" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="humidity" optional="YES" attributeType="String"/>
-        <attribute name="temp" optional="YES" attributeType="String"/>
-        <attribute name="visibility" optional="YES" attributeType="String"/>
-        <attribute name="weatherImg" optional="YES" attributeType="Binary"/>
-        <attribute name="wind" optional="YES" attributeType="String"/>
-    </entity>
-    <elements>
-        <element name="DayWeather" positionX="-63" positionY="-18" width="128" height="179"/>
-    </elements>
+    <elements/>
 </model>

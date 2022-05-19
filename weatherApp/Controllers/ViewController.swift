@@ -8,12 +8,15 @@
 import UIKit
 import IBAnimatable
 import MBProgressHUD
+
+
+
+
 class ViewController: UIViewController {
     
     @IBOutlet var cityNamelbl: UILabel!
     
     // weather card Properties
-    
     @IBOutlet var pressurelbl: UILabel!
     @IBOutlet var datelbl: UILabel!
     @IBOutlet var selectedWeatherImg: UIImageView!
@@ -24,17 +27,26 @@ class ViewController: UIViewController {
     @IBOutlet var humlbl: UILabel!
     @IBOutlet var DaysTableView: UITableView!
     @IBOutlet var weatherCardView: AnimatableView!
-    
+    // init info Properties
     private var indexOfSelectedDay : IndexPath =  [0,0]
-    var currentCityCode : String = "12521"
+    var currentCityCode : String = defultCitisDataArr[0].cityCode
     var currentCityName : String = ""
     var dailyWeatherArr = [List]()
+    
+    //coredata Properties
+
+
+
+  
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    let saveContext = (UIApplication.shared.delegate as! AppDelegate).saveContext
+
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         //welcome animation 
         weatherCardView.animate(.slide(way: .in, direction:.down),duration: 1.5)
-
         DaysTableView.delegate = self
         DaysTableView.dataSource = self
 
@@ -44,6 +56,11 @@ class ViewController: UIViewController {
         getDataFromApi(cityCode : currentCityCode )
     }
     
+    //allow user to update the weather data
+    @IBAction func refreshweatherTapped(_ sender: UIButton) {
+        getDataFromApi(cityCode : currentCityCode )
+
+    }
   
  
     
@@ -66,19 +83,34 @@ extension ViewController : UITableViewDataSource , UITableViewDelegate {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
      
         let cell = DaysTableView.dequeueReusableCell(withIdentifier: "dayCell", for: indexPath) as! DayTableViewCell
-        
+        cell.selectionStyle = .none
+        if(indexOfSelectedDay == indexPath){
+            cell.changeCellToSelected()
+        }else{
+            cell.changeCellToUnSelected()
+
+            
+        }
         
         cell.setDayWeatherData(dayDate: convertDtToformatedDate(dt: Double(dailyWeatherArr[indexPath.row].dt), foramt: "h:mm a")
                               
                               , watherStatus: convertDtToformatedDate(dt: Double(dailyWeatherArr[indexPath.row].dt), foramt: "EEE"), lowTemp:"↓ \( ConvertKivToC(temperature: dailyWeatherArr[indexPath.row].main.tempMin))", highTemp: "↑ \(ConvertKivToC(temperature: dailyWeatherArr[indexPath.row].main.tempMax))", weatherImg: getWeatherStateIcon(weatherState:   dailyWeatherArr[indexPath.row].weather[0].icon) )
         
         
+  
+        
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        MBProgressHUD.showAdded(to: self.view, animated: true)
+
         indexOfSelectedDay = indexPath
+
         updateWeatherCardViewInfo()
+        tableView.reloadData()
+        MBProgressHUD.hide(for: self.view, animated: true)
+        
     }
     
     
@@ -198,4 +230,15 @@ extension ViewController {
  
     
     
+}
+
+
+
+
+
+
+// MARK: - CoreData
+extension ViewController {
+
+
 }
