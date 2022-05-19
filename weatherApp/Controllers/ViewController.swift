@@ -21,18 +21,14 @@ class ViewController: UIViewController {
     @IBOutlet var weekDaylbl: UILabel!
     @IBOutlet var humlbl: UILabel!
     @IBOutlet var DaysTableView: UITableView!
-    @IBOutlet var citiesCollectionView: UICollectionView!
     
     private var indexOfSelectedDay : IndexPath =  [0,0]
-    private var indexOfSelectedCity : IndexPath =  [0,0]
     
-    let citiesNames : [WeatherCity] = citisDataArr
     var dailyWeatherArr = [List]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        citiesCollectionView.dataSource = self
-        citiesCollectionView.delegate = self
+  
         
         DaysTableView.delegate = self
         DaysTableView.dataSource = self
@@ -49,59 +45,6 @@ class ViewController: UIViewController {
 
 
 
-
-// MARK: - HEADER  :  cities collection view
-extension ViewController : UICollectionViewDelegate , UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return citiesNames.count + 1
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        
-        
-        
-        
-        if indexPath.item != citiesNames.count  {
-            
-            let cell = citiesCollectionView.dequeueReusableCell(withReuseIdentifier: "cityCell" , for: indexPath) as! CityCollectionViewCell
-            cell.cityNamelbl.text = citiesNames[indexPath.item].cityName
-            if(indexPath == indexOfSelectedCity ){
-                cell.changeCellToSelected()
-            }else{
-                cell.changeCellToUnSelected()
-                
-            }
-            return cell
-            
-        }else{
-            
-            let cell = citiesCollectionView.dequeueReusableCell(withReuseIdentifier: "addCityCell" , for: indexPath) as! addCityCollectionViewCell
-            
-            return cell
-            
-        }
-        
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        indexOfSelectedCity = indexPath
-        
-        if(indexPath.row <  citiesNames.count ){
-//            getDataFromApi(zipCode : citiesNames[indexOfSelectedCity.item].cityWOEIDs )
-//            collectionView.reloadData()
-        }
-        else{
-            
-            
-            
-        }
-    }
-    
-    
-    
-    
-    
-}
 
 
 
