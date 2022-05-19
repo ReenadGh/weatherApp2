@@ -20,16 +20,12 @@ class CitiesViewController: UIViewController {
     
     var defultCities = defultCitisDataArr
     
+    
+    // exit the enter code card
     @IBAction func dissmisCodeCityCardTapped(_ sender: UIButton) {
         enterCityCodeCard.animate(.slide(way: .out, direction: .down ))
     }
     
-    func showErrorMessage(message : String ){
-        
-        errorMessagelbl.isHidden = false
-        errorMessagelbl.text = message
-        enterCityCodeCard.animate(.shake(repeatCount: 1),duration: 0.4 )
-    }
     
     //if user click on enter button --> to add new city
     @IBAction func enterCityCodeTapped(_ sender: UIButton) {
@@ -234,6 +230,13 @@ extension CitiesViewController {
           dateFormatter.dateFormat = foramt
           return dateFormatter.string(from: date)
       }
+    //show error message if the user enter valid value
+    func showErrorMessage(message : String ){
+        
+        errorMessagelbl.isHidden = false
+        errorMessagelbl.text = message
+        enterCityCodeCard.animate(.shake(repeatCount: 1),duration: 0.4 )
+    }
     
     
     

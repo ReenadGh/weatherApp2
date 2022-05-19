@@ -33,13 +33,6 @@ class ViewController: UIViewController {
     var currentCityName : String = ""
     var dailyWeatherArr = [List]()
     
-    //coredata Properties
-
-
-
-  
-    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-    let saveContext = (UIApplication.shared.delegate as! AppDelegate).saveContext
 
     
     
@@ -118,8 +111,11 @@ extension ViewController : UITableViewDataSource , UITableViewDelegate {
     
 }
 
-// MARK: - Data   :  Data fetching from API and present it to the view
 
+
+
+
+// MARK: - Data   :  Data fetching from API and present it to the view
 extension ViewController {
     
     
