@@ -10,7 +10,7 @@ import UIKit
 class CitiesViewController: UIViewController {
     @IBOutlet var citiesCollectionView: UICollectionView!
     
-    let citiesNames : [WeatherCity] = citisDataArr
+    var citiesInfArr = [WeatherCity]()
     private var indexOfSelectedCity : IndexPath =  [0,0]
 
     override func viewDidLoad() {
@@ -19,24 +19,36 @@ class CitiesViewController: UIViewController {
         citiesCollectionView.dataSource = self
         citiesCollectionView.delegate = self
         
+        addNewCityByCode(cityCode : "12521" )
+        addNewCityByCode(cityCode : "35213" )
+        addNewCityByCode(cityCode : "12345" )
+
+
+        print(citiesInfArr)
     }
     
 
 }
 
 
-// MARK: - HEADER  :  cities collection view
+// MARK: -  :  cities collection view
 extension CitiesViewController : UICollectionViewDelegate , UICollectionViewDataSource , UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return citiesNames.count + 1
+        return citiesInfArr.count + 1
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
           
-        if indexPath.item != citiesNames.count  {
+        if indexPath.item != citiesInfArr.count  {
             
             let cell = citiesCollectionView.dequeueReusableCell(withReuseIdentifier: "cityCell" , for: indexPath) as! CityCollectionViewCell
-            cell.cityNamelbl.text = citiesNames[indexPath.item].cityName
+            cell.cityNamelbl.text = citiesInfArr[indexPath.item].cityName
+            cell.templbl.text = citiesInfArr[indexPath.item].temp
+            cell.weatherImg.image = citiesInfArr[indexPath.item].weatherImg
+            cell.sunriselbl.text = citiesInfArr[indexPath.item].citySunrise
+            cell.sunsetlbl.text = citiesInfArr[indexPath.item].citySunsit
+
+            
             if(indexPath == indexOfSelectedCity ){
             }else{
                 
@@ -50,10 +62,8 @@ extension CitiesViewController : UICollectionViewDelegate , UICollectionViewData
             return cell
             
         }
-        
-        
-   
-        
+
+      // layout functions for citiesCollectionView
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: view.frame.width * 0.485 , height:view.frame.width * 0.54 )
@@ -66,10 +76,11 @@ extension CitiesViewController : UICollectionViewDelegate , UICollectionViewData
         return 0.3
     }
     
+    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         indexOfSelectedCity = indexPath
         
-        if(indexPath.row <  citiesNames.count ){
+        if(indexPath.row <  citiesInfArr.count ){
 //            getDataFromApi(zipCode : citiesNames[indexOfSelectedCity.item].cityWOEIDs )
 //            collectionView.reloadData()
         }
@@ -83,6 +94,80 @@ extension CitiesViewController : UICollectionViewDelegate , UICollectionViewData
  
     
     
+    
+    
+    
+}
+
+
+
+// MARK: - Data   :  Data fetching from API and present it to the view
+
+extension CitiesViewController {
+    
+    // fetch city data from api then add it to cities Array
+    func addNewCityByCode(cityCode : String ){
+        
+        
+        let jsonURLstring = "http://api.openweathermap.org/data/2.5/forecast?zip=\(cityCode)&appid=553626bed26b25f56af0d6fa3890d1c5"
+        guard let url = URL(string : jsonURLstring) else {return }
+        URLSession.shared.dataTask(with: url) { [self] data , response, errur in
+            guard let data = data else {return }
+                        
+            do {
+                let watherData = try JSONDecoder().decode( CityWeather.self ,from: data )
+               
+                 // get city Info from api then  append it into city array
+                  self.citiesInfArr.append(WeatherCity(cityName: watherData.city.name , cityWOEIDs: cityCode , citySunsit: self.convertDtToformatedDate(dt: Double(watherData.city.sunset) , foramt : "h:mm a" ) , citySunrise: self.convertDtToformatedDate(dt: Double(watherData.city.sunrise) , foramt : "h:mm a" ), temp: "\(self.ConvertKivToC(temperature: watherData.list[0].main.temp))", weatherImg: getWeatherStateIcon(weatherState: watherData.list[0].weather[0].icon) ))
+
+                DispatchQueue.main.async {
+                    citiesCollectionView.reloadData()
+                }
+            }catch let jsonErr{
+                print("Error :" ,jsonErr )
+            }
+            
+        }.resume()
+    }
+    
+    // take the weather icon name and get the image from the api
+    func getWeatherStateIcon(weatherState : String )->UIImage{
+        
+        let url = URL(string: "https://openweathermap.org/img/wn/\(weatherState)@2x.png")
+        let data = try? Data(contentsOf: url!)
+        
+        return UIImage(data: data!)!
+    }
+    
+    
+    // onvert the value from fahrenheit to celsius dgree
+    func ConvertKivToC(temperature : Double)->String {
+       return  "\(String(format: "%.0f", temperature - 273.15))°"
+    }
+    
+    
+    
+    
+    
+    // date formatting converting functions
+    func convertDtToformatedDate(dt: Double, foramt : String ) -> String {
+        
+//        Wednesday, Sep 12, 2018           --> EEEE, MMM d, yyyy
+//        09/12/2018                        --> MM/dd/yyyy
+//        09-12-2018 14:11                  --> MM-dd-yyyy HH:mm
+//        Sep 12, 2:11 PM                   --> MMM d, h:mm a
+//        September 2018                    --> MMMM yyyy
+//        Sep 12, 2018                      --> MMM d, yyyy
+//        Wed, 12 Sep 2018 14:11:54 +0000   --> E, d MMM yyyy HH:mm:ss Z
+//        2018-09-12T14:11:54+0000          --> yyyy-MM-dd'T'HH:mm:ssZ
+//        12.09.18                          --> dd.MM.yy
+//        10:41:02.112                      --> HH:mm:ss.SSS
+        
+          let date = Date(timeIntervalSince1970: dt)
+        let dateFormatter = DateFormatter()
+          dateFormatter.dateFormat = foramt
+          return dateFormatter.string(from: date)
+      }
     
     
     

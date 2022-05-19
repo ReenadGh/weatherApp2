@@ -6,7 +6,7 @@
 //
 
 import UIKit
-
+import IBAnimatable
 class ViewController: UIViewController {
     
     
@@ -21,6 +21,7 @@ class ViewController: UIViewController {
     @IBOutlet var weekDaylbl: UILabel!
     @IBOutlet var humlbl: UILabel!
     @IBOutlet var DaysTableView: UITableView!
+    @IBOutlet var weatherCardView: AnimatableView!
     
     private var indexOfSelectedDay : IndexPath =  [0,0]
     
@@ -28,8 +29,9 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-  
-        
+        //welcome animation 
+        weatherCardView.animate(.slide(way: .in, direction:.down),duration: 1.5)
+
         DaysTableView.delegate = self
         DaysTableView.dataSource = self
         
@@ -37,6 +39,9 @@ class ViewController: UIViewController {
         
         getDataFromApi(cityCode : "12521" )
     }
+    
+  
+ 
     
     
 }
@@ -153,7 +158,7 @@ extension ViewController {
     
     
     
-    // onvert the value from fahrenheit to celsius dgree
+    // convert the value from fahrenheit to celsius dgree
     func ConvertKivToC(temperature : Double)->String {
        return  "\(String(format: "%.0f", temperature - 273.15))°"
     }
@@ -165,7 +170,7 @@ extension ViewController {
 // MARK: - Update View FUNCTIONS
 extension ViewController {
     
-    // update the view depends on the index of selected day  * 0 for defult
+    // update the view depends on the index of selected time  * 0 for defult
     func updateWeatherCardViewInfo(){
         datelbl.text = convertDtToformatedDate(dt: Double(dailyWeatherArr[indexOfSelectedDay.row].dt), foramt: "MMM d, h:mm a")
         weekDaylbl.text = convertDtToformatedDate(dt: Double(dailyWeatherArr[indexOfSelectedDay.row].dt), foramt: "EEEE")
