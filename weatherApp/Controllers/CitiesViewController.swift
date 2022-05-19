@@ -78,7 +78,15 @@ extension CitiesViewController : UICollectionViewDelegate , UICollectionViewData
     
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        dismiss(animated: true, completion: nil)
         indexOfSelectedCity = indexPath
+        
+        
+        // pass the city code to the main controller
+        let mainController = self.navigationController?.viewControllers.first as! ViewController
+        mainController.currentCityCode = citiesInfArr[indexPath.row].cityWOEIDs
+        self.navigationController?.popViewController(animated: true)
+
         
         if(indexPath.row <  citiesInfArr.count ){
 //            getDataFromApi(zipCode : citiesNames[indexOfSelectedCity.item].cityWOEIDs )

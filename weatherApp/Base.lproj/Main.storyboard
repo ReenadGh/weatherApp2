@@ -390,6 +390,7 @@
                     </navigationItem>
                     <connections>
                         <outlet property="DaysTableView" destination="coc-eG-GHU" id="G5n-nq-wqK"/>
+                        <outlet property="cityNamelbl" destination="hT6-3T-ciM" id="Ve4-YP-mle"/>
                         <outlet property="datelbl" destination="2cB-Ih-xr4" id="Awf-aL-0OH"/>
                         <outlet property="humlbl" destination="yqJ-Ir-gzD" id="T9F-4h-lnt"/>
                         <outlet property="pressurelbl" destination="Izv-po-xER" id="yF7-50-5Gb"/>

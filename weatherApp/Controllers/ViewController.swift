@@ -9,6 +9,7 @@ import UIKit
 import IBAnimatable
 class ViewController: UIViewController {
     
+    @IBOutlet var cityNamelbl: UILabel!
     
     // weather card Properties
     
@@ -24,7 +25,8 @@ class ViewController: UIViewController {
     @IBOutlet var weatherCardView: AnimatableView!
     
     private var indexOfSelectedDay : IndexPath =  [0,0]
-    
+    var currentCityCode : String = "12521"
+    var currentCityName : String = ""
     var dailyWeatherArr = [List]()
     
     override func viewDidLoad() {
@@ -34,10 +36,11 @@ class ViewController: UIViewController {
 
         DaysTableView.delegate = self
         DaysTableView.dataSource = self
-        
-        
-        
-        getDataFromApi(cityCode : "12521" )
+
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        getDataFromApi(cityCode : currentCityCode )
     }
     
   
@@ -99,8 +102,9 @@ extension ViewController {
             
             do {
                 let watherData = try JSONDecoder().decode( CityWeather.self ,from: data )
-               // self.dailyWeatherArr.removeAll()
-            
+                self.dailyWeatherArr.removeAll()
+               
+                self.currentCityName = watherData.city.name
                 for i in 0...20{
                     self.dailyWeatherArr.append(watherData.list[i])
                 }
@@ -172,6 +176,8 @@ extension ViewController {
     
     // update the view depends on the index of selected time  * 0 for defult
     func updateWeatherCardViewInfo(){
+        
+        cityNamelbl.text = currentCityName
         datelbl.text = convertDtToformatedDate(dt: Double(dailyWeatherArr[indexOfSelectedDay.row].dt), foramt: "MMM d, h:mm a")
         weekDaylbl.text = convertDtToformatedDate(dt: Double(dailyWeatherArr[indexOfSelectedDay.row].dt), foramt: "EEEE")
         weatherTemplbl.text = "\(ConvertKivToC(temperature: dailyWeatherArr[indexOfSelectedDay.row].main.temp))"
