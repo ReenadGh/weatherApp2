@@ -22,6 +22,13 @@ struct WeatherCity {
     let weatherImg : UIImage
 }
 
+struct DefultCity {
+    
+   let cityName : String
+    let cityCode : String
+}
+
+
 // MARK: - Welcome
 struct CityWeather : Codable {
     let cod: String

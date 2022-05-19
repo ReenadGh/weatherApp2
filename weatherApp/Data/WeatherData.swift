@@ -8,9 +8,9 @@
 import Foundation
 
 
-//
-//var citisDataArr :[WeatherCity] = [
-//    WeatherCity(cityName: "Riyadh", cityWOEIDs: "1939753"),
-//    WeatherCity(cityName: "Cairo", cityWOEIDs: "1521894"),
-//    WeatherCity(cityName: "NY", cityWOEIDs: "2459115")
-//]
+
+var defultCitisDataArr :[DefultCity] = [
+    DefultCity(cityName: "NY", cityCode: "10001"),
+    DefultCity(cityName: "MI", cityCode: "33111"),
+    DefultCity(cityName: "London", cityCode: "56273")
+]

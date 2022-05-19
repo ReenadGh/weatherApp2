@@ -8,6 +8,8 @@
 import UIKit
 import MBProgressHUD
 import IBAnimatable
+import MBProgressHUD
+
 class CitiesViewController: UIViewController {
     @IBOutlet var citiesCollectionView: UICollectionView!
     
@@ -15,6 +17,8 @@ class CitiesViewController: UIViewController {
     @IBOutlet var enterCityCodeCard: AnimatableView!
     @IBOutlet var cityCodeTf: AnimatableTextField!
     @IBOutlet var errorMessagelbl: UILabel!
+    
+    var defultCities = defultCitisDataArr
     
     @IBAction func dissmisCodeCityCardTapped(_ sender: UIButton) {
         enterCityCodeCard.animate(.slide(way: .out, direction: .down ))
@@ -27,7 +31,7 @@ class CitiesViewController: UIViewController {
         enterCityCodeCard.animate(.shake(repeatCount: 1),duration: 0.4 )
     }
     
-    //if user click on enter button
+    //if user click on enter button --> to add new city
     @IBAction func enterCityCodeTapped(_ sender: UIButton) {
                 
         guard let cityCode = cityCodeTf.text,
@@ -56,9 +60,12 @@ class CitiesViewController: UIViewController {
         citiesCollectionView.dataSource = self
         citiesCollectionView.delegate = self
         
-        addNewCityByCode(cityCode : "12521" )
-        addNewCityByCode(cityCode : "35213" )
-        addNewCityByCode(cityCode : "12345" )
+        
+        for city in defultCitisDataArr {
+            addNewCityByCode(cityCode : city.cityCode)
+
+        }
+     
      
 
         print(citiesInfArr)
@@ -159,6 +166,7 @@ extension CitiesViewController {
         
         let jsonURLstring = "http://api.openweathermap.org/data/2.5/forecast?zip=\(cityCode)&appid=553626bed26b25f56af0d6fa3890d1c5"
         guard let url = URL(string : jsonURLstring) else {return }
+        MBProgressHUD.showAdded(to: self.view, animated: true)
         URLSession.shared.dataTask(with: url) { [self] data , response, errur in
             guard let data = data else {return }
                         
@@ -171,13 +179,18 @@ extension CitiesViewController {
                 DispatchQueue.main.async {
                     citiesCollectionView.reloadData()
                     enterCityCodeCard.animate(.slide(way: .out, direction:.down))
+                    MBProgressHUD.hide(for: self.view, animated: true)
+
                 }
             }catch let jsonErr{
                 print("Error :" ,jsonErr )
                 DispatchQueue.main.async {
                     // if the user enter wrong city code :
                  showErrorMessage(message: "invalid city code ")
+                    MBProgressHUD.hide(for: self.view, animated: true)
+
                 }
+
             }
             
         }.resume()

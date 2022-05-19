@@ -6,7 +6,7 @@
 //
 
 import UIKit
-
+import MBProgressHUD
 class DayTableViewCell: UITableViewCell {
 
     @IBOutlet var dayDatelbl: UILabel!
@@ -24,16 +24,23 @@ class DayTableViewCell: UITableViewCell {
         lowTemplbl.text = lowTemp
         highTemplbl.text = highTemp
         self.weatherImg.image = weatherImg
+
+
     }
     
     
     
     func changeCellToSelected (){
         
-        dayDatelbl.textColor = .blue
-        lowTemplbl.textColor = .blue
-        weatherStatuslbl.textColor = .blue
-        highTemplbl.textColor = .blue
+        dayDatelbl.textColor = UIColor(red: 0.24, green: 0.52, blue: 0.87, alpha: 1.00)
+
+        lowTemplbl.textColor = UIColor(red: 0.24, green: 0.52, blue: 0.87, alpha: 1.00)
+        weatherStatuslbl.textColor = UIColor(red: 0.24, green: 0.52, blue: 0.87, alpha: 1.00)
+        
+
+        highTemplbl.textColor = UIColor(red: 0.24, green: 0.52, blue: 0.87, alpha: 1.00)
+        
+
 
 
     }
