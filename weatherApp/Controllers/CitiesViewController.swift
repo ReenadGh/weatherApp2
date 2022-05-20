@@ -9,6 +9,7 @@ import UIKit
 import MBProgressHUD
 import IBAnimatable
 import MBProgressHUD
+import CoreData
 
 class CitiesViewController: UIViewController {
     @IBOutlet var citiesCollectionView: UICollectionView!
@@ -18,6 +19,10 @@ class CitiesViewController: UIViewController {
     @IBOutlet var cityCodeTf: AnimatableTextField!
     @IBOutlet var errorMessagelbl: UILabel!
     
+    //core data
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    let saveContext = (UIApplication.shared.delegate as! AppDelegate).saveContext
+    var userCities = [CityInfo]()
     var defultCities = defultCitisDataArr
     
     
@@ -38,7 +43,10 @@ class CitiesViewController: UIViewController {
         if citiesInfArr.contains(where: { $0.cityWOEIDs == cityCode }) {
           showErrorMessage(message: "the city is already exists !")
         } else {
-            addNewCityByCode(cityCode : cityCode )
+            //fetch the city info from api
+            fetchCityInfoApi(cityCode : cityCode )
+            //save it to the storage 
+            addNewCity(cityCode: cityCode)
         }
         
      
@@ -53,18 +61,26 @@ class CitiesViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        //adding defults cities to core data if the app lunched for first time
+        if !isAppAlreadyLaunchedOnce() {
+            for city in defultCities {
+                addNewCity(cityCode: city.cityCode)
+            }
+        }
+
+
         citiesCollectionView.dataSource = self
         citiesCollectionView.delegate = self
         
         
-        for city in defultCitisDataArr {
-            addNewCityByCode(cityCode : city.cityCode)
-
+        fetchCitiesData()
+        for city in userCities {
+            fetchCityInfoApi(cityCode : city.code!)
+            print( city.code!)
         }
      
      
 
-        print(citiesInfArr)
     }
     
 
@@ -157,7 +173,7 @@ extension CitiesViewController : UICollectionViewDelegate , UICollectionViewData
 extension CitiesViewController {
     
     // fetch city data from api then add it to cities Array
-    func addNewCityByCode(cityCode : String ){
+    func fetchCityInfoApi(cityCode : String ){
         
         
         let jsonURLstring = "http://api.openweathermap.org/data/2.5/forecast?zip=\(cityCode)&appid=553626bed26b25f56af0d6fa3890d1c5"
@@ -238,6 +254,54 @@ extension CitiesViewController {
         enterCityCodeCard.animate(.shake(repeatCount: 1),duration: 0.4 )
     }
     
+  // check if its run for first time  --> to add defults cities to coredata
+    func isAppAlreadyLaunchedOnce()->Bool{
+            let defaults = UserDefaults.standard
+            
+            if defaults.bool(forKey: "isAppAlreadyLaunchedOnce"){
+                print("App already launched : \(String(describing: isAppAlreadyLaunchedOnce))")
+                return true
+            }else{
+                defaults.set(true, forKey: "isAppAlreadyLaunchedOnce")
+                print("App launched first time")
+                return false
+            }
+        }
+    
+    
+    
+}
+
+
+// MARK: - CoreData
+extension CitiesViewController {
+    func fetchCitiesData(){
+ 
+        
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CityInfo")
+                do {
+                    
+                    let results = try context.fetch(fetchRequest)
+                    // add the result as an array of this entity
+                    userCities = results as! [CityInfo]
+                } catch {
+                    print("\(error)")
+                }
+        
+    
+
+    }
+    
+    func addNewCity(cityCode : String )
+     {
+         
+         //create new object
+         let newCity = CityInfo(context: self.context)
+         newCity.code = cityCode
+         saveContext()
+
+     }
+
     
     
 }

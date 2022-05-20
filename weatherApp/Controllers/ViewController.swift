@@ -8,7 +8,7 @@
 import UIKit
 import IBAnimatable
 import MBProgressHUD
-
+import CoreData
 
 
 
@@ -35,6 +35,7 @@ class ViewController: UIViewController {
     
 
     
+ 
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -42,6 +43,8 @@ class ViewController: UIViewController {
         weatherCardView.animate(.slide(way: .in, direction:.down),duration: 1.5)
         DaysTableView.delegate = self
         DaysTableView.dataSource = self
+        
+
 
     }
     
@@ -233,8 +236,3 @@ extension ViewController {
 
 
 
-// MARK: - CoreData
-extension ViewController {
-
-
-}
