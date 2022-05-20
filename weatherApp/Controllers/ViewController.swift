@@ -39,8 +39,8 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        //welcome animation 
-        weatherCardView.animate(.slide(way: .in, direction:.down),duration: 1.5)
+        //welcome animation
+        weatherCardView.isHidden = true
         DaysTableView.delegate = self
         DaysTableView.dataSource = self
         
@@ -124,7 +124,6 @@ extension ViewController {
     
     func getDataFromApi(cityCode : String ){
         
-        
         let jsonURLstring = "http://api.openweathermap.org/data/2.5/forecast?zip=\(cityCode)&appid=553626bed26b25f56af0d6fa3890d1c5"
         guard let url = URL(string : jsonURLstring) else {return }
         
@@ -147,7 +146,11 @@ extension ViewController {
                     self.DaysTableView.reloadData()
                     
                     //end of fetching progress
+                    self.weatherCardView.isHidden = false
                     MBProgressHUD.hide(for: self.view, animated: true)
+                    
+                    self.weatherCardView.animate(.slide(way: .in, direction:.down),duration: 1.5)
+
                 }
                 
 
