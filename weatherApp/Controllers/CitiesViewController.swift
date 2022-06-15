@@ -8,7 +8,6 @@
 import UIKit
 import MBProgressHUD
 import IBAnimatable
-import MBProgressHUD
 import CoreData
 
 class CitiesViewController: UIViewController {
@@ -24,7 +23,8 @@ class CitiesViewController: UIViewController {
     let saveContext = (UIApplication.shared.delegate as! AppDelegate).saveContext
     var userCities = [CityInfo]()
     var defultCities = defultCitisDataArr
-    
+    //city delegate
+    var delegate : CityDataDelegate?
     
     // exit the enter code card
     @IBAction func dissmisCodeCityCardTapped(_ sender: UIButton) {
@@ -134,19 +134,16 @@ extension CitiesViewController : UICollectionViewDelegate , UICollectionViewData
     
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        dismiss(animated: true, completion: nil)
         indexOfSelectedCity = indexPath
-        
-        
- 
-
-        
+  
         if(indexPath.row <  citiesInfArr.count ){
-            
-            // pass the city code to the main controller
-            let mainController = self.navigationController?.viewControllers.first as! ViewController
-            mainController.currentCityCode = citiesInfArr[indexPath.row].cityWOEIDs
+            delegate?.ChangecityCode(cityCode: citiesInfArr[indexPath.row].cityWOEIDs)
             self.navigationController?.popViewController(animated: true)
+
+            // pass the city code to the main controller
+//            let mainController = self.navigationController?.viewControllers.first as! ViewController
+//            mainController.currentCityCode =
+//            self.navigationController?.popViewController(animated: true)
   
         }
         else{
@@ -275,6 +272,7 @@ extension CitiesViewController {
 
 // MARK: - CoreData
 extension CitiesViewController {
+
     func fetchCitiesData(){
  
         

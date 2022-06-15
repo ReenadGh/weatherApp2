@@ -12,7 +12,17 @@ import CoreData
 
 
 
-class ViewController: UIViewController {
+class ViewController: UIViewController ,CityDataDelegate {
+    func ChangecityCode(cityCode: String) {
+        currentCityCode = cityCode
+    }
+    
+    @IBAction func menuButtonTapped(_ sender: Any) {
+        let citiesVC = self.storyboard?.instantiateViewController(withIdentifier: "CitiesVC") as! CitiesViewController
+        citiesVC.delegate = self
+        self.navigationController?.pushViewController(citiesVC, animated: true)
+        
+    }
     
     @IBOutlet var cityNamelbl: UILabel!
     
@@ -99,10 +109,9 @@ extension ViewController : UITableViewDataSource , UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+      
         MBProgressHUD.showAdded(to: self.view, animated: true)
-
         indexOfSelectedDay = indexPath
-
         updateWeatherCardViewInfo()
         tableView.reloadData()
         MBProgressHUD.hide(for: self.view, animated: true)
@@ -129,7 +138,7 @@ extension ViewController {
         
         //start of fetching progress
         MBProgressHUD.showAdded(to: self.view, animated: true)
-        URLSession.shared.dataTask(with: url) { data , response, errur in
+        URLSession.shared.dataTask(with: url) { data , response, error in
             guard let data = data else {return }
             do {
                 let watherData = try JSONDecoder().decode( CityWeather.self ,from: data )
@@ -144,13 +153,10 @@ extension ViewController {
                 DispatchQueue.main.async {
                     self.updateWeatherCardViewInfo()
                     self.DaysTableView.reloadData()
-                    
                     //end of fetching progress
                     self.weatherCardView.isHidden = false
                     MBProgressHUD.hide(for: self.view, animated: true)
-                    
                     self.weatherCardView.animate(.slide(way: .in, direction:.down),duration: 1.5)
-
                 }
                 
 
@@ -229,6 +235,8 @@ extension ViewController {
         selectedWeatherImg.image = getWeatherStateIcon(weatherState:   dailyWeatherArr[indexOfSelectedDay.row].weather[0].icon)
 //
     }
+    
+    
  
     
     
